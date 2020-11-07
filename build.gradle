@@ -1,0 +1,32 @@
+apply plugin: 'java'
+apply plugin: 'application'
+
+mainClassName = "ee.ut.tvt.hibernateDemo.Main"
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile('org.hsqldb:hsqldb:2.3.4')
+    compile('org.hibernate:hibernate-entitymanager:5.2.1.Final')
+    compile('org.hibernate:hibernate-java8:5.2.1.Final')
+    compile('org.apache.logging.log4j:log4j-api:2.6.2')
+    compile('org.apache.logging.log4j:log4j-core:2.6.2')
+	implementation "javax.xml.bind:jaxb-api:2.2.11"
+}
+
+task hsql(type: JavaExec) {
+    main = "org.hsqldb.Server"
+    classpath = sourceSets.main.runtimeClasspath
+    println(projectDir)
+    def databasePath = "${projectDir}/data/POSdb"
+    println(databasePath)
+    args = ["-database.0", "${databasePath}", "-dbname.0", "POS"]
+}
+
+task dbmanager(dependsOn: 'classes', type: JavaExec) {
+    main = "org.hsqldb.util.DatabaseManagerSwing"
+    classpath = sourceSets.main.runtimeClasspath
+    args = ["--user", "sa", "--url", "jdbc:hsqldb:hsql://localhost/POS"]
+}
